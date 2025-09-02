@@ -10,5 +10,10 @@
   },
   "webcredentials": {
     "apps": ["3A5NDG46TC.com.QAM2024.QAM-N"]
+  },
+  "appclips": {
+    "apps": [
+      "3A5NDG46TC.com.QAM2024.QAM-N.Clip"
+    ]
   }
 }
