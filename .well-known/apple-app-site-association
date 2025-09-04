@@ -2,13 +2,9 @@
 "applinks": {
     "apps": [],
     "details": [
-      {
-        "appID": "3A5NDG46TC.com.QAM2024.QAM-N",
-        "paths": [ "*" ]
-      },
-      {
+{
         "appID": "3A5NDG46TC.com.QAM2024.QAM-N.Clip",
-        "paths": [ "/joy" ]
+        "paths": [ "*" ]
       }
     ]
   },
