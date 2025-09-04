@@ -1,22 +1,20 @@
 {
-"applinks": {
+  "applinks": {
     "apps": [],
     "details": [
-{
+      {
+        "appID": "3A5NDG46TC.com.QAM2024.QAM-N",
+        "paths": [ "/", "/index.html" ]
+      },
+      {
         "appID": "3A5NDG46TC.com.QAM2024.QAM-N.Clip",
-        "paths": [ "*" ]
+        "paths": [ "/joy" ]
       }
     ]
   },
-"appclips": {
+  "appclips": {
     "apps": [
       "3A5NDG46TC.com.QAM2024.QAM-N.Clip"
-    ],
-"details": [
-{
-        "appID": "3A5NDG46TC.com.QAM2024.QAM-N.Clip",
-        "paths": [ "*" ]
-      }
     ]
   }
 }
