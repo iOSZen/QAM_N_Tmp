@@ -4,11 +4,11 @@
     "details": [
       {
         "appID": "3A5NDG46TC.com.QAM2024.QAM-N",
-        "paths": [ "/", "/index.html" ]
+        "paths": [ "*" ]
       },
       {
         "appID": "3A5NDG46TC.com.QAM2024.QAM-N.Clip",
-        "paths": [ "/harsh" ]
+        "paths": [ "*" ]
       }
     ]
   },
