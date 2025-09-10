@@ -3,56 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QAM Connect – Quick Access</title>
+  <title>QAM Connect</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #4a90e2, #50c9c3);
+      color: #fff;
       text-align: center;
-      background: #f9f9f9;
-      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
+
     header {
-      padding: 2rem 1rem;
-      background: #4a90e2;
-      color: white;
+      padding: 3rem 1rem 1rem;
+    }
+    header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
     header h1 {
-      margin: 0 0 0.5rem;
+      margin: 1rem 0 0.5rem;
+      font-size: 2rem;
+      font-weight: 700;
     }
     header p {
       margin: 0;
       font-size: 1.1rem;
+      opacity: 0.9;
     }
+
     main {
       padding: 2rem 1rem;
+      flex: 1;
     }
+
     .buttons {
-      margin-top: 1.5rem;
+      margin: 2rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
     }
-    .btn {
-      display: inline-block;
-      margin: 0.5rem;
-      padding: 0.8rem 1.5rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      color: white;
-      transition: background 0.2s ease;
+    .store-btn img {
+      height: 55px;
+      transition: transform 0.2s ease;
     }
-    .btn-ios {
-      background: #000;
+    .store-btn img:hover {
+      transform: scale(1.05);
     }
-    .btn-ios:hover {
-      background: #333;
-    }
-    .btn-android {
-      background: #3ddc84;
-    }
-    .btn-android:hover {
-      background: #2fa568;
-    }
+
     .qr-section {
       display: flex;
       flex-wrap: wrap;
@@ -61,53 +65,64 @@
       margin-top: 2rem;
     }
     .qr-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      width: 200px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 220px;
+    }
+    .qr-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
     }
     .qr-card img {
-      max-width: 150px;
-      margin-bottom: 0.5rem;
+      width: 160px;
+      height: 160px;
+      border-radius: 16px;
+      background: #fff;
+      padding: 12px; /* ✅ extra padding for scanning */
     }
-    .qr-card p {
-      margin: 0;
-      font-size: 0.9rem;
-      color: #555;
+    .qr-label {
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
     }
+
     footer {
       padding: 1.5rem;
-      font-size: 0.9rem;
-      color: #666;
+      font-size: 0.85rem;
+      opacity: 0.85;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>🚀 QAM Connect</h1>
-    <p>Quick access to our service, wherever you are!</p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Q_letter.png" alt="QAM Connect App Icon" />
+    <h1>QAM Connect</h1>
+    <p>Instant access to your world, anywhere.</p>
   </header>
 
   <main>
-    <p>
-      This page helps Android and iOS users access QAM Connect quickly.  
-      Install the app below for the full experience!
-    </p>
-
     <div class="buttons">
-      <a href="https://play.google.com/store/apps/details?id=com.qntm.qam" class="btn btn-android">Get it on Google Play</a>
-      <a href="https://apps.apple.com/us/app/qam-connect/id6747566787" class="btn btn-ios">Download on App Store</a>
+      <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.qntm.qam">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play">
+      </a>
+      <a class="store-btn" href="https://apps.apple.com/us/app/qam-connect/id6747566787">
+        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store">
+      </a>
     </div>
 
     <div class="qr-section">
       <div class="qr-card">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.qntm.qam" alt="QR Google Play" />
-        <p>Scan for Google Play</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://play.google.com/store/apps/details?id=com.qntm.qam" alt="QR Google Play" />
+        <div class="qr-label">Google Play</div>
       </div>
       <div class="qr-card">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://apps.apple.com/us/app/qam-connect/id6747566787" alt="QR App Store" />
-        <p>Scan for App Store</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://apps.apple.com/us/app/qam-connect/id6747566787" alt="QR App Store" />
+        <div class="qr-label">App Store</div>
       </div>
     </div>
   </main>
