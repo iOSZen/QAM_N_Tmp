@@ -1,107 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Joke</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QAM Connect – Quick Access</title>
   <style>
-    * { box-sizing: border-box; }
     body {
+      font-family: Arial, sans-serif;
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 10% -10%, #f7faff 10%, transparent),
-                  radial-gradient(1200px 600px at 110% 110%, #fff8f0 10%, transparent),
-                  linear-gradient(180deg, #f3f4f6, #ffffff);
-      color: #111827;
-    }
-    .card {
-      width: min(720px, 92vw);
-      background: white;
-      border-radius: 1.25rem;
-      padding: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.06);
-      border: 1px solid #e5e7eb;
+      padding: 0;
       text-align: center;
+      background: #f9f9f9;
+      color: #333;
     }
-    h1 { margin: 0 0 .5rem; letter-spacing: .5px; font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
-    p.lead { margin: 0 0 1.25rem; color: #6b7280; }
-    blockquote {
-      margin: 1.5rem auto;
-      font-size: clamp(1.15rem, 2.8vw, 1.5rem);
-      line-height: 1.5;
-      font-weight: 600;
-    }
-    .btns { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
-    button {
-      border: 0;
-      padding: .8rem 1rem;
-      border-radius: .9rem;
-      background: #111827;
+    header {
+      padding: 2rem 1rem;
+      background: #4a90e2;
       color: white;
-      cursor: pointer;
-      font-weight: 600;
-      transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
-      box-shadow: 0 4px 14px rgba(17,24,39,.18);
     }
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); box-shadow: 0 2px 6px rgba(17,24,39,.2); }
-    .ghost { background: #f3f4f6; color: #111827; box-shadow: none; border: 1px solid #e5e7eb; }
-    footer { margin-top: 1.25rem; font-size: .9rem; color: #6b7280; }
+    header h1 {
+      margin: 0 0 0.5rem;
+    }
+    header p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+    main {
+      padding: 2rem 1rem;
+    }
+    .buttons {
+      margin-top: 1.5rem;
+    }
+    .btn {
+      display: inline-block;
+      margin: 0.5rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
+      transition: background 0.2s ease;
+    }
+    .btn-ios {
+      background: #000;
+    }
+    .btn-ios:hover {
+      background: #333;
+    }
+    .btn-android {
+      background: #3ddc84;
+    }
+    .btn-android:hover {
+      background: #2fa568;
+    }
+    .qr-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .qr-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 200px;
+    }
+    .qr-card img {
+      max-width: 150px;
+      margin-bottom: 0.5rem;
+    }
+    .qr-card p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    footer {
+      padding: 1.5rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
   </style>
 </head>
 <body>
-  <main class="card" role="main">
-    <h1>Here’s a joke 🤭</h1>
-    <p class="lead">Click the button to get a new one.</p>
-    <blockquote id="joke">Why did the developer go broke? Because he used up all his cache.</blockquote>
-    <div class="btns">
-      <button id="new">Tell me another</button>
-      <button id="copy" class="ghost" title="Copy to clipboard">Copy</button>
+  <header>
+    <h1>🚀 QAM Connect</h1>
+    <p>Quick access to our service, wherever you are!</p>
+  </header>
+
+  <main>
+    <p>
+      This page helps Android and iOS users access QAM Connect quickly.  
+      Install the app below for the full experience!
+    </p>
+
+    <div class="buttons">
+      <a href="https://play.google.com/store/apps/details?id=com.qntm.qam" class="btn btn-android">Get it on Google Play</a>
+      <a href="https://apps.apple.com/us/app/qam-connect/id6747566787" class="btn btn-ios">Download on App Store</a>
     </div>
-    <footer>Single-file HTML. Works offline.</footer>
+
+    <div class="qr-section">
+      <div class="qr-card">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://play.google.com/store/apps/details?id=com.qntm.qam" alt="QR Google Play" />
+        <p>Scan for Google Play</p>
+      </div>
+      <div class="qr-card">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://apps.apple.com/us/app/qam-connect/id6747566787" alt="QR App Store" />
+        <p>Scan for App Store</p>
+      </div>
+    </div>
   </main>
 
-  <script>
-    const jokes = [
-      "Why did the developer go broke? Because he used up all his cache.",
-      "I told my computer I needed a break, and it said: 'No problem—I'll go to sleep.'",
-      "Why do Java developers wear glasses? Because they don't C#.",
-      "A SQL query walks into a bar, walks up to two tables and asks: 'Can I join you?'",
-      "There are only 10 types of people in the world: those who understand binary and those who don't.",
-      "To understand recursion, you must first understand recursion.",
-      "I would tell you a UDP joke, but you might not get it.",
-      "My boss told me to have a good day… so I went home.",
-      "Why was the JavaScript developer sad? Because they didn't Node how to Express themselves.",
-      "How many programmers does it take to change a light bulb? None, that's a hardware problem."
-    ];
-
-    const jokeEl = document.getElementById('joke');
-    const newBtn = document.getElementById('new');
-    const copyBtn = document.getElementById('copy');
-
-    function randomJoke() {
-      const i = Math.floor(Math.random() * jokes.length);
-      return jokes[i];
-    }
-
-    function setJoke(text) {
-      jokeEl.textContent = text;
-    }
-
-    newBtn.addEventListener('click', () => setJoke(randomJoke()));
-
-    copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(jokeEl.textContent);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => (copyBtn.textContent = 'Copy'), 900);
-      } catch (e) {
-        alert('Copy failed: ' + e);
-      }
-    });
-  </script>
+  <footer>
+    © 2025 QAM Connect. All rights reserved.
+  </footer>
 </body>
 </html>
