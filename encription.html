@@ -1,151 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Encryption/Decryption Tool</title>
+<meta charset="utf-8" />
+<title>Encryption & Decryption Tool</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: #333;
-        margin: 0;
-        padding: 0;
-    }
+  :root{
+    --bg1:#667eea; --bg2:#764ba2; --card:#ffffff;
+    --muted:#8a8f9a; --accent:#556cd6;
+  }
+  html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, Helvetica, Arial;}
+  body{
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    display:flex;align-items:center;justify-content:center;padding:32px;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
 
-    .container {
-        max-width: 600px;
-        margin: 40px auto;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
-        padding: 30px;
-    }
+  .app {
+    width:100%; max-width:820px; border-radius:16px; overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.35);
+    display:grid; grid-template-columns: 1fr 420px; gap:0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,250,0.98));
+  }
 
-    h2 {
-        text-align: center;
-        color: #333;
-    }
+  .left {
+    padding:28px 28px 28px 34px;
+  }
+  .right {
+    background: linear-gradient(180deg, rgba(245,248,255,0.9), rgba(240,244,255,0.9));
+    padding:22px; border-left: 1px solid rgba(0,0,0,0.04);
+  }
 
-    label {
-        display: block;
-        margin: 10px 0 5px;
-        font-weight: bold;
-    }
+  h1{margin:0;font-size:20px;color:#222;font-weight:700}
+  p.lead{margin:6px 0 20px;color:var(--muted);font-size:13px}
 
-    input, select, button {
-        width: 100%;
-        padding: 12px;
-        margin: 5px 0 15px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 16px;
-    }
+  label{display:block;margin-top:12px;margin-bottom:6px;font-weight:600;color:#2b2b2b;font-size:13px}
+  input[type="text"], select, textarea {
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid #e6e9ef;
+    font-size:14px; box-sizing:border-box; background: #fff;
+    outline:none; transition: box-shadow .15s ease, transform .05s ease;
+  }
 
-    button {
-        background: #667eea;
-        color: #fff;
-        border: none;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.3s ease;
-    }
+  textarea { min-height:110px; resize:vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space:pre-wrap; }
 
-    button:hover {
-        background: #556cd6;
-    }
+  .controls { display:flex; gap:10px; margin-top:14px; }
+  .controls button {
+    flex:1; padding:11px; border-radius:10px; border:none; cursor:pointer;
+    font-weight:700; color:#fff; background:var(--accent); box-shadow: 0 6px 18px rgba(85,108,214,0.18);
+    transition: transform .08s ease, box-shadow .12s ease;
+  }
+  .controls button.secondary { background: #4a5568; opacity:0.95; box-shadow:none; }
+  .controls button:active { transform: translateY(1px) }
 
-    .output {
-        background: #f5f5f5;
-        padding: 15px;
-        border-radius: 8px;
-        font-family: monospace;
-        white-space: pre-wrap;
-    }
+  .small-row { display:flex; gap:8px; align-items:center; margin-top:8px; }
+  .small-row .small {
+    flex:1; font-size:13px; color:var(--muted);
+  }
+  .small-row button.copy {
+    padding:8px 10px; border-radius:8px; border:none; cursor:pointer; background:#eef2ff; font-weight:600;
+  }
 
-    footer {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 14px;
-        color: #fff;
-    }
-</style>
-</head>
-<body>
+  .outputBox {
+    background: #f7f9ff; border:1px solid #e6ebff; padding:12px; margin-top:12px; border-radius:10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:14px; color:#111;
+    word-break:break-all;
+  }
 
-<div class="container">
-    <h2>Encryption & Decryption Tool</h2>
+  .meta {font-size:12px;color:var(--muted); margin-top:10px;}
+  .footer { text-align:center;padding:12px;font-size:13px;color:#5b5f66;background:linear-gradient(180deg, transparent, rgba(0,0,0,0.02));}
 
-    <label>Enter Text:</label>
-    <input type="text" id="inputText" value="JOY">
-
-    <label>Select Method:</label>
-    <select id="methodSelect">
-        <option value="base64">Base64</option>
-        <option value="xor" selected>XOR</option>
-        <option value="caesar">Caesar Cipher</option>
-    </select>
-
-    <label>Key (for XOR / Caesar):</label>
-    <input type="text" id="keyInput" value="42">
-
-    <button onclick="encryptText()">Encrypt</button>
-    <button onclick="decryptText()">Decrypt</button>
-
-    <label>Encrypted Output:</label>
-    <div class="output" id="encryptedOutput"></div>
-
-    <label>Decrypted Output:</label>
-    <div class="output" id="decryptedOutput"></div>
-</div>
-
-<footer>
-    Simple Encryption Tool — Created with ❤️ by Joyharsh Christie
-</footer>
-
-<script>
-function encryptText() {
-    let text = document.getElementById("inputText").value;
-    let method = document.getElementById("methodSelect").value;
-    let key = document.getElementById("keyInput").value;
-
-    let encrypted = "";
-    if (method === "base64") {
-        encrypted = btoa(text);
-    } else if (method === "xor") {
-        let keyNum = parseInt(key) || 0;
-        let bytes = [];
-        for (let i = 0; i < text.length; i++) {
-            bytes.push(text.charCodeAt(i) ^ keyNum);
-        }
-        encrypted = btoa(String.fromCharCode(...bytes));
-    } else if (method === "caesar") {
-        let shift = parseInt(key) || 0;
-        encrypted = text.split('').map(c => String.fromCharCode(c.charCodeAt(0) + shift)).join('');
-    }
-
-    document.getElementById("encryptedOutput").innerText = encrypted;
-}
-
-function decryptText() {
-    let encrypted = document.getElementById("encryptedOutput").innerText;
-    let method = document.getElementById("methodSelect").value;
-    let key = document.getElementById("keyInput").value;
-
-    let decrypted = "";
-    if (method === "base64") {
-        decrypted = atob(encrypted);
-    } else if (method === "xor") {
-        let keyNum = parseInt(key) || 0;
-        let bytes = atob(encrypted).split('').map(c => c.charCodeAt(0) ^ keyNum);
-        decrypted = String.fromCharCode(...bytes);
-    } else if (method === "caesar") {
-        let shift = parseInt(key) || 0;
-        decrypted = encrypted.split('').map(c => String.fromCharCode(c.charCodeAt(0) - shift)).join('');
-    }
-
-    document.getElementById("decryptedOutput").innerText = decrypted;
-}
-</script>
-
-</body>
-</html>
+  /* responsive */
+  @media (max-width:880px){
+    .app{grid-template-columns:1fr; padding:0;}
+    .rig
