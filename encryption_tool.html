@@ -50,6 +50,17 @@
   }
   textarea { min-height:120px; resize:vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space:pre-wrap; }
 
+  /* Dropdown style with padding for arrow */
+  select {
+    padding-right: 36px; /* extra padding for dropdown arrow */
+    appearance: none;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23667eea' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+
   .row { display:flex; gap:10px; margin-top:14px; }
   .btn {
     flex:1; padding:11px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700;
@@ -71,9 +82,6 @@
     word-break:break-all;
     min-height:48px;
   }
-
-  .actions { display:flex; gap:8px; margin-top:10px; }
-  .actions button { flex:1; padding:9px 10px; border-radius:8px; border:none; cursor:pointer; background:#eef2ff; font-weight:700; }
 
   .meta { margin-top:12px; color:var(--muted); font-size:13px; }
 
@@ -119,16 +127,10 @@
     <label for="encryptedOutput">Encrypted (paste here or produced by Encrypt)</label>
     <textarea id="encryptedOutput" placeholder="Encrypted output will appear here — paste an encrypted string to decrypt it."></textarea>
 
-    <div class="actions">
-      <button type="button" onclick="copyText('encryptedOutput')">Copy Encrypted</button>
-      <button type="button" onclick="pasteToInput()">Paste → Input</button>
-    </div>
-
     <label style="margin-top:12px">Decrypted Output</label>
     <div class="outputBox" id="decryptedOutput"></div>
 
     <div class="actions" style="margin-top:8px;">
-      <button type="button" onclick="copyDecrypted()">Copy Decrypted</button>
       <button type="button" onclick="clearAll()">Clear</button>
     </div>
 
@@ -137,8 +139,6 @@
 </div>
 
 <script>
-/* --- Helpers --- */
-// Unicode-safe base64
 function base64EncodeUnicode(str) {
   try {
     return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
@@ -157,13 +157,11 @@ function base64DecodeUnicode(b64) {
   }
 }
 
-// XOR (TextEncoder/TextDecoder for Unicode safety)
 function xorEncrypt(text, keyNum) {
   const encoder = new TextEncoder();
   const bytes = encoder.encode(text);
   const out = new Uint8Array(bytes.length);
   for (let i=0; i<bytes.length; i++) out[i] = bytes[i] ^ (keyNum & 0xFF);
-  // convert to binary string for btoa
   let bin = '';
   for (let i=0; i<out.length; i++) bin += String.fromCharCode(out[i]);
   return btoa(bin);
@@ -179,7 +177,6 @@ function xorDecrypt(b64str, keyNum) {
   return decoder.decode(out);
 }
 
-// Caesar
 function caesarEncrypt(text, shift) {
   return Array.from(text).map(ch => String.fromCharCode(ch.charCodeAt(0) + shift)).join('');
 }
@@ -187,22 +184,15 @@ function caesarDecrypt(text, shift) {
   return Array.from(text).map(ch => String.fromCharCode(ch.charCodeAt(0) - shift)).join('');
 }
 
-/* --- Main --- */
 function encryptText() {
   const input = document.getElementById('inputText').value || '';
   const method = document.getElementById('methodSelect').value;
   const key = document.getElementById('keyInput').value;
   let result = '';
   try {
-    if (method === 'base64') {
-      result = base64EncodeUnicode(input);
-    } else if (method === 'xor') {
-      const keyNum = parseInt(key) || 0;
-      result = xorEncrypt(input, keyNum);
-    } else if (method === 'caesar') {
-      const shift = parseInt(key) || 0;
-      result = caesarEncrypt(input, shift);
-    }
+    if (method === 'base64') result = base64EncodeUnicode(input);
+    else if (method === 'xor') result = xorEncrypt(input, parseInt(key) || 0);
+    else if (method === 'caesar') result = caesarEncrypt(input, parseInt(key) || 0);
   } catch (e) {
     result = 'Encryption error: ' + e.message;
   }
@@ -211,7 +201,6 @@ function encryptText() {
 }
 
 function decryptText() {
-  // prefer encrypted textarea; fallback to input field
   const encArea = document.getElementById('encryptedOutput').value.trim();
   const fallback = document.getElementById('inputText').value || '';
   const encrypted = encArea || fallback;
@@ -223,48 +212,24 @@ function decryptText() {
   }
   let out = '';
   try {
-    if (method === 'base64') {
-      out = base64DecodeUnicode(encrypted);
-    } else if (method === 'xor') {
-      const keyNum = parseInt(key);
-      if (Number.isNaN(keyNum)) throw new Error('Numeric key required for XOR.');
-      out = xorDecrypt(encrypted, keyNum);
-    } else if (method === 'caesar') {
-      const shift = parseInt(key) || 0;
-      out = caesarDecrypt(encrypted, shift);
-    }
+    if (method === 'base64') out = base64DecodeUnicode(encrypted);
+    else if (method === 'xor') out = xorDecrypt(encrypted, parseInt(key) || 0);
+    else if (method === 'caesar') out = caesarDecrypt(encrypted, parseInt(key) || 0);
     document.getElementById('decryptedOutput').innerText = out;
   } catch (e) {
     document.getElementById('decryptedOutput').innerText = 'Decryption error: ' + e.message;
   }
 }
 
-/* --- Small UI helpers --- */
-function copyText(id) {
-  const el = document.getElementById(id);
-  const text = el.value || el.innerText || '';
-  if (!text) { alert('Nothing to copy'); return; }
-  navigator.clipboard?.writeText(text).then(() => alert('Copied to clipboard')).catch(() => prompt('Copy:', text));
-}
-function copyDecrypted() {
-  const text = document.getElementById('decryptedOutput').innerText || '';
-  if (!text) { alert('Nothing to copy'); return; }
-  navigator.clipboard?.writeText(text).then(() => alert('Copied to clipboard')).catch(() => prompt('Copy:', text));
-}
-function pasteToInput() {
-  document.getElementById('inputText').value = document.getElementById('encryptedOutput').value;
-}
 function clearAll() {
   document.getElementById('inputText').value = '';
   document.getElementById('encryptedOutput').value = '';
   document.getElementById('decryptedOutput').innerText = '';
 }
 
-/* Attach buttons */
 document.getElementById('encryptBtn').addEventListener('click', encryptText);
 document.getElementById('decryptBtn').addEventListener('click', decryptText);
 
-/* allow Enter to encrypt */
 document.getElementById('inputText').addEventListener('keydown', function(e){
   if (e.key === 'Enter') { encryptText(); e.preventDefault(); }
 });
