@@ -3,175 +3,271 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Encrypt / Decrypt Tool</title>
+<title>Encryption / Decryption Tool</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f3f4f6;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding: 20px;
+  :root{
+    --grad1: #667eea; --grad2: #764ba2;
+    --card-bg: #ffffff; --muted: #6b7280; --accent: #556cd6;
   }
-  .app-container {
-    background: #fff;
-    width: 100%;
-    max-width: 420px;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-  }
-  .app-header {
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    padding: 16px;
-    color: #fff;
-    font-weight: bold;
-    font-size: 18px;
-    text-align: center;
-  }
-  .app-body {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  label {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: block;
-  }
-  input, select, textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-    display: block;
-  }
-  textarea {
-    min-height: 80px;
-    resize: vertical;
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    background: linear-gradient(135deg,var(--grad1),var(--grad2));
+    -webkit-font-smoothing:antialiased;
   }
 
-  /* ✅ Custom dropdown styling */
-  select {
-    padding-right: 36px; /* space for arrow */
-    appearance: none;
-    background-color: #fff;
-    background-image: url("data:image/svg+xml;utf8,<svg fill='%23667eea' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 16px;
+  .card {
+    width:100%;
+    max-width:960px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,255,0.98));
+    border-radius:12px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+    display:flex;
+    gap:0;
+    overflow:hidden;
   }
 
+  .col {
+    padding:26px;
+  }
+
+  /* left (inputs) and right (outputs) columns */
+  .left { flex: 1 1 56%; }
+  .right { flex: 0 0 42%; background:linear-gradient(180deg,#f8fbff,#f2f7ff); border-left:1px solid rgba(0,0,0,0.04); }
+
+  h1{margin:0;font-size:20px;color:#111;}
+  p.lead{margin:8px 0 18px;color:var(--muted);font-size:13px}
+
+  label{display:block;margin-top:12px;margin-bottom:6px;font-weight:600;color:#222;font-size:13px}
+  input[type="text"], select, textarea {
+    width:100%; padding:11px 12px; border-radius:10px; border:1px solid #e6e9ef;
+    background:#fff; font-size:14px; outline:none;
+  }
+  textarea { min-height:120px; resize:vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space:pre-wrap; }
+
+  .row { display:flex; gap:10px; margin-top:14px; }
   .btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
+    flex:1; padding:11px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700;
+    color:#fff; background:var(--accent);
+    box-shadow: 0 8px 20px rgba(85,108,214,0.14);
   }
-  .btn.primary {
-    background: #667eea;
-    color: #fff;
-  }
-  .btn.primary:hover { background: #556cd6; }
-  .btn.secondary {
-    background: #475569;
-    color: #fff;
-  }
-  .btn.secondary:hover { background: #334155; }
+  .btn.secondary { background:#475569; box-shadow:none; }
+  .small { font-size:13px; color:var(--muted); }
+
   .outputBox {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 12px;
-    font-family: monospace;
-    min-height: 40px;
-    font-size: 14px;
-    word-break: break-word;
+    margin-top:12px;
+    background:#fff;
+    border-radius:10px;
+    border:1px solid #e8eefc;
+    padding:12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size:14px;
+    color:#111;
+    word-break:break-all;
+    min-height:48px;
+  }
+
+  .actions { display:flex; gap:8px; margin-top:10px; }
+  .actions button { flex:1; padding:9px 10px; border-radius:8px; border:none; cursor:pointer; background:#eef2ff; font-weight:700; }
+
+  .meta { margin-top:12px; color:var(--muted); font-size:13px; }
+
+  footer { text-align:center; padding:12px; color:var(--muted); font-size:13px; background:linear-gradient(180deg, transparent, rgba(0,0,0,0.02)); }
+
+  @media (max-width:880px){
+    .card{flex-direction:column}
+    .right{border-left:none;border-top:1px solid rgba(0,0,0,0.04)}
   }
 </style>
 </head>
 <body>
 
-<div class="app-container">
-  <div class="app-header">🔐 Encrypt / Decrypt</div>
+<div class="card" role="application" aria-label="Encryption tool">
+  <div class="col left">
+    <h1>Encryption & Decryption</h1>
+    <p class="lead">Quick obfuscation tools for testing: Base64, XOR (default), Caesar. Paste encrypted text into the right box to decrypt directly.</p>
 
-  <div class="app-body">
-    <div>
-      <label for="inputText">Enter Text</label>
-      <input type="text" id="inputText" value="JOY">
+    <label for="inputText">Plain text</label>
+    <input id="inputText" type="text" value="JOY" autocomplete="off" />
+
+    <label for="methodSelect">Method</label>
+    <select id="methodSelect" aria-label="Method">
+      <option value="base64">Base64</option>
+      <option value="xor" selected>XOR (default)</option>
+      <option value="caesar">Caesar Cipher</option>
+    </select>
+
+    <label for="keyInput">Key (for XOR / Caesar)</label>
+    <input id="keyInput" type="text" value="42" autocomplete="off" />
+
+    <div class="row">
+      <button class="btn" id="encryptBtn">Encrypt</button>
+      <button class="btn secondary" id="decryptBtn">Decrypt</button>
     </div>
 
-    <div>
-      <label for="methodSelect">Method</label>
-      <select id="methodSelect">
-        <option value="base64">Base64</option>
-        <option value="xor" selected>XOR</option>
-        <option value="caesar">Caesar Cipher</option>
-      </select>
+    <div class="meta">
+      <strong>Note:</strong> These methods are for simple obfuscation/demos. Do not use for sensitive production secrets.
+    </div>
+  </div>
+
+  <div class="col right" aria-live="polite">
+    <label for="encryptedOutput">Encrypted (paste here or produced by Encrypt)</label>
+    <textarea id="encryptedOutput" placeholder="Encrypted output will appear here — paste an encrypted string to decrypt it."></textarea>
+
+    <div class="actions">
+      <button type="button" onclick="copyText('encryptedOutput')">Copy Encrypted</button>
+      <button type="button" onclick="pasteToInput()">Paste → Input</button>
     </div>
 
-    <div>
-      <label for="keyInput">Key (for XOR / Caesar)</label>
-      <input type="text" id="keyInput" value="42">
+    <label style="margin-top:12px">Decrypted Output</label>
+    <div class="outputBox" id="decryptedOutput"></div>
+
+    <div class="actions" style="margin-top:8px;">
+      <button type="button" onclick="copyDecrypted()">Copy Decrypted</button>
+      <button type="button" onclick="clearAll()">Clear</button>
     </div>
 
-    <button class="btn primary" onclick="encryptText()">Encrypt</button>
-    <button class="btn secondary" onclick="decryptText()">Decrypt</button>
-
-    <div>
-      <label>Encrypted</label>
-      <textarea id="encryptedOutput"></textarea>
-    </div>
-
-    <div>
-      <label>Decrypted</label>
-      <div class="outputBox" id="decryptedOutput"></div>
-    </div>
+    <footer>Created with ❤️ — not a replacement for real cryptography.</footer>
   </div>
 </div>
 
 <script>
-function base64Encode(str){return btoa(unescape(encodeURIComponent(str)));}
-function base64Decode(str){return decodeURIComponent(escape(atob(str)));}
-function xorEncrypt(text,keyNum){let bytes=new TextEncoder().encode(text),out=[];for(let i=0;i<bytes.length;i++)out.push(bytes[i]^keyNum);return btoa(String.fromCharCode(...out));}
-function xorDecrypt(b64,keyNum){let bin=atob(b64),out=[];for(let i=0;i<bin.length;i++)out.push(bin.charCodeAt(i)^keyNum);return new TextDecoder().decode(new Uint8Array(out));}
-function caesarEncrypt(text,shift){return [...text].map(c=>String.fromCharCode(c.charCodeAt(0)+shift)).join('');}
-function caesarDecrypt(text,shift){return [...text].map(c=>String.fromCharCode(c.charCodeAt(0)-shift)).join('');}
+/* --- Helpers --- */
+// Unicode-safe base64
+function base64EncodeUnicode(str) {
+  try {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+      function(match, p1) { return String.fromCharCode('0x' + p1); }));
+  } catch (e) {
+    throw new Error('Base64 encode failed: ' + e.message);
+  }
+}
+function base64DecodeUnicode(b64) {
+  try {
+    return decodeURIComponent(atob(b64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+  } catch (e) {
+    throw new Error('Base64 decode failed: ' + e.message);
+  }
+}
 
-function encryptText(){
-  const text=document.getElementById('inputText').value;
-  const method=document.getElementById('methodSelect').value;
-  const key=parseInt(document.getElementById('keyInput').value)||0;
-  let result="";
-  if(method==="base64")result=base64Encode(text);
-  else if(method==="xor")result=xorEncrypt(text,key);
-  else if(method==="caesar")result=caesarEncrypt(text,key);
-  document.getElementById('encryptedOutput').value=result;
+// XOR (TextEncoder/TextDecoder for Unicode safety)
+function xorEncrypt(text, keyNum) {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(text);
+  const out = new Uint8Array(bytes.length);
+  for (let i=0; i<bytes.length; i++) out[i] = bytes[i] ^ (keyNum & 0xFF);
+  // convert to binary string for btoa
+  let bin = '';
+  for (let i=0; i<out.length; i++) bin += String.fromCharCode(out[i]);
+  return btoa(bin);
 }
-function decryptText(){
-  const encrypted=document.getElementById('encryptedOutput').value.trim();
-  const method=document.getElementById('methodSelect').value;
-  const key=parseInt(document.getElementById('keyInput').value)||0;
-  let result="";
-  try{
-    if(method==="base64")result=base64Decode(encrypted);
-    else if(method==="xor")result=xorDecrypt(encrypted,key);
-    else if(method==="caesar")result=caesarDecrypt(encrypted,key);
-  }catch(e){result="Decryption error";}
-  document.getElementById('decryptedOutput').innerText=result;
+function xorDecrypt(b64str, keyNum) {
+  let bin;
+  try {
+    bin = atob(b64str);
+  } catch (e) { throw new Error('Invalid Base64 for XOR.'); }
+  const out = new Uint8Array(bin.length);
+  for (let i=0; i<bin.length; i++) out[i] = bin.charCodeAt(i) ^ (keyNum & 0xFF);
+  const decoder = new TextDecoder();
+  return decoder.decode(out);
 }
+
+// Caesar
+function caesarEncrypt(text, shift) {
+  return Array.from(text).map(ch => String.fromCharCode(ch.charCodeAt(0) + shift)).join('');
+}
+function caesarDecrypt(text, shift) {
+  return Array.from(text).map(ch => String.fromCharCode(ch.charCodeAt(0) - shift)).join('');
+}
+
+/* --- Main --- */
+function encryptText() {
+  const input = document.getElementById('inputText').value || '';
+  const method = document.getElementById('methodSelect').value;
+  const key = document.getElementById('keyInput').value;
+  let result = '';
+  try {
+    if (method === 'base64') {
+      result = base64EncodeUnicode(input);
+    } else if (method === 'xor') {
+      const keyNum = parseInt(key) || 0;
+      result = xorEncrypt(input, keyNum);
+    } else if (method === 'caesar') {
+      const shift = parseInt(key) || 0;
+      result = caesarEncrypt(input, shift);
+    }
+  } catch (e) {
+    result = 'Encryption error: ' + e.message;
+  }
+  document.getElementById('encryptedOutput').value = result;
+  document.getElementById('decryptedOutput').innerText = '';
+}
+
+function decryptText() {
+  // prefer encrypted textarea; fallback to input field
+  const encArea = document.getElementById('encryptedOutput').value.trim();
+  const fallback = document.getElementById('inputText').value || '';
+  const encrypted = encArea || fallback;
+  const method = document.getElementById('methodSelect').value;
+  const key = document.getElementById('keyInput').value;
+  if (!encrypted) {
+    document.getElementById('decryptedOutput').innerText = 'Nothing to decrypt.';
+    return;
+  }
+  let out = '';
+  try {
+    if (method === 'base64') {
+      out = base64DecodeUnicode(encrypted);
+    } else if (method === 'xor') {
+      const keyNum = parseInt(key);
+      if (Number.isNaN(keyNum)) throw new Error('Numeric key required for XOR.');
+      out = xorDecrypt(encrypted, keyNum);
+    } else if (method === 'caesar') {
+      const shift = parseInt(key) || 0;
+      out = caesarDecrypt(encrypted, shift);
+    }
+    document.getElementById('decryptedOutput').innerText = out;
+  } catch (e) {
+    document.getElementById('decryptedOutput').innerText = 'Decryption error: ' + e.message;
+  }
+}
+
+/* --- Small UI helpers --- */
+function copyText(id) {
+  const el = document.getElementById(id);
+  const text = el.value || el.innerText || '';
+  if (!text) { alert('Nothing to copy'); return; }
+  navigator.clipboard?.writeText(text).then(() => alert('Copied to clipboard')).catch(() => prompt('Copy:', text));
+}
+function copyDecrypted() {
+  const text = document.getElementById('decryptedOutput').innerText || '';
+  if (!text) { alert('Nothing to copy'); return; }
+  navigator.clipboard?.writeText(text).then(() => alert('Copied to clipboard')).catch(() => prompt('Copy:', text));
+}
+function pasteToInput() {
+  document.getElementById('inputText').value = document.getElementById('encryptedOutput').value;
+}
+function clearAll() {
+  document.getElementById('inputText').value = '';
+  document.getElementById('encryptedOutput').value = '';
+  document.getElementById('decryptedOutput').innerText = '';
+}
+
+/* Attach buttons */
+document.getElementById('encryptBtn').addEventListener('click', encryptText);
+document.getElementById('decryptBtn').addEventListener('click', decryptText);
+
+/* allow Enter to encrypt */
+document.getElementById('inputText').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') { encryptText(); e.preventDefault(); }
+});
 </script>
-
 </body>
 </html>
