@@ -3,104 +3,147 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Encryption / Decryption Tool</title>
+<title>Encrypt / Decrypt Tool</title>
 <style>
+  * { box-sizing: border-box; }
   body {
-    font-family: system-ui, sans-serif;
-    background: linear-gradient(135deg,#667eea,#764ba2);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f3f4f6;
     margin: 0;
-    padding: 0;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: flex-start;
     min-height: 100vh;
-  }
-  .card {
-    max-width: 900px;
-    width: 95%;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    display: flex;
-    flex-wrap: wrap;
-    overflow: hidden;
-  }
-  .col {
     padding: 20px;
-    flex: 1 1 50%;
-    min-width: 280px;
   }
-  h2 { margin-top: 0; font-size: 20px; }
-  label { display: block; margin-top: 10px; font-weight: bold; font-size: 14px; }
-  input, select, button, textarea {
+  .app-container {
+    background: #fff;
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    max-width: 420px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
   }
-  textarea { height: 100px; resize: vertical; }
-  .btn {
-    background: #667eea;
+  .app-header {
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    padding: 16px;
     color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+  }
+  .app-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    display: block;
+  }
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  /* ✅ Custom dropdown styling */
+  select {
+    padding-right: 36px; /* space for arrow */
+    appearance: none;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%23667eea' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
     border: none;
     cursor: pointer;
-    margin-top: 8px;
-    border-radius: 8px;
-    font-weight: bold;
+    font-size: 15px;
   }
-  .btn:hover { background: #556cd6; }
-  .btn.secondary { background: #475569; }
+  .btn.primary {
+    background: #667eea;
+    color: #fff;
+  }
+  .btn.primary:hover { background: #556cd6; }
+  .btn.secondary {
+    background: #475569;
+    color: #fff;
+  }
+  .btn.secondary:hover { background: #334155; }
   .outputBox {
-    margin-top: 10px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    min-height: 40px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
     font-family: monospace;
+    min-height: 40px;
     font-size: 14px;
     word-break: break-word;
   }
-  @media (max-width: 700px) {
-    .card { flex-direction: column; }
-    .col { flex: 1 1 100%; }
+  /* Extra spacing for copy buttons */
+  .copy-btn {
+    margin-top: 10px;
   }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <!-- Left Column -->
-  <div class="col left">
-    <h2>Encrypt / Decrypt</h2>
-    <label for="inputText">Enter Text</label>
-    <input type="text" id="inputText" value="JOY">
+<div class="app-container">
+  <div class="app-header">🔐 Encrypt / Decrypt</div>
 
-    <label for="methodSelect">Method</label>
-    <select id="methodSelect">
-      <option value="base64">Base64</option>
-      <option value="xor" selected>XOR</option>
-      <option value="caesar">Caesar Cipher</option>
-    </select>
+  <div class="app-body">
+    <div>
+      <label for="inputText">Enter Text</label>
+      <input type="text" id="inputText" value="JOY">
+    </div>
 
-    <label for="keyInput">Key (for XOR / Caesar)</label>
-    <input type="text" id="keyInput" value="42">
+    <div>
+      <label for="methodSelect">Method</label>
+      <select id="methodSelect">
+        <option value="base64">Base64</option>
+        <option value="xor" selected>XOR</option>
+        <option value="caesar">Caesar Cipher</option>
+      </select>
+    </div>
 
-    <button class="btn" onclick="encryptText()">Encrypt</button>
+    <div>
+      <label for="keyInput">Key (for XOR / Caesar)</label>
+      <input type="text" id="keyInput" value="42">
+    </div>
+
+    <button class="btn primary" onclick="encryptText()">Encrypt</button>
     <button class="btn secondary" onclick="decryptText()">Decrypt</button>
-  </div>
 
-  <!-- Right Column -->
-  <div class="col right">
-    <label>Encrypted</label>
-    <textarea id="encryptedOutput"></textarea>
-    <button class="btn" onclick="copyEncrypted()">Copy Encrypted</button>
+    <div>
+      <label>Encrypted</label>
+      <textarea id="encryptedOutput"></textarea>
+      <button class="btn primary copy-btn" onclick="copyEncrypted()">Copy Encrypted</button>
+    </div>
 
-    <label style="margin-top:15px;">Decrypted</label>
-    <div class="outputBox" id="decryptedOutput"></div>
-    <button class="btn" onclick="copyDecrypted()">Copy Decrypted</button>
+    <div>
+      <label>Decrypted</label>
+      <div class="outputBox" id="decryptedOutput"></div>
+      <button class="btn primary copy-btn" onclick="copyDecrypted()">Copy Decrypted</button>
+    </div>
   </div>
 </div>
 
