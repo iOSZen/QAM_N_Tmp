@@ -72,4 +72,218 @@
   /* responsive */
   @media (max-width:880px){
     .app{grid-template-columns:1fr; padding:0;}
-    .rig
+    .right{border-left:none;border-top:1px solid rgba(0,0,0,0.04);}
+  }
+</style>
+</head>
+<body>
+
+<div class="app" role="application" aria-label="Encryption tool">
+  <div class="left">
+    <h1>Encryption & Decryption</h1>
+    <p class="lead">Type a string, choose a method (default: XOR), encrypt it and paste encrypted text back to decrypt. Safe for quick obfuscation — not for high-security secrets.</p>
+
+    <label for="inputText">Input (plain text)</label>
+    <input id="inputText" type="text" value="JOY" aria-label="Plain text input">
+
+    <label for="methodSelect">Method</label>
+    <select id="methodSelect" aria-label="Method selector">
+      <option value="base64">Base64</option>
+      <option value="xor" selected>XOR (default)</option>
+      <option value="caesar">Caesar Cipher</option>
+    </select>
+
+    <label for="keyInput">Key (XOR / Caesar)</label>
+    <input id="keyInput" type="text" value="42" aria-label="Key input">
+
+    <div class="controls" style="margin-top:18px;">
+      <button id="encryptBtn" onclick="encryptText()">Encrypt</button>
+      <button id="decryptBtn" class="secondary" onclick="decryptText()">Decrypt</button>
+    </div>
+
+    <div class="small-row" style="margin-top:8px;">
+      <div class="small">Tip: Paste the encrypted string into the "Encrypted" box to decrypt directly.</div>
+      <button class="copy" onclick="clearAll()">Clear</button>
+    </div>
+
+    <div class="meta">Methods:
+      <strong>Base64</strong> — encoding (Unicode-safe),
+      <strong>XOR</strong> — bytewise XOR with numeric key, result base64-encoded,
+      <strong>Caesar</strong> — simple char-shift (not for Unicode-sensitive use).
+    </div>
+  </div>
+
+  <div class="right">
+    <label for="encryptedOutput">Encrypted (paste or produced by encrypt)</label>
+    <textarea id="encryptedOutput" placeholder="Encrypted output will appear here — paste an encrypted string here to decrypt." aria-label="Encrypted text area"></textarea>
+
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button onclick="copyText('encryptedOutput')" style="flex:1;">Copy Encrypted</button>
+      <button onclick="pasteToInput()" style="flex:1;">Paste → Input</button>
+    </div>
+
+    <label style="margin-top:14px;">Decrypted Output</label>
+    <div class="outputBox" id="decryptedOutput" aria-live="polite"></div>
+
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button onclick="copyText('decryptedOutput')" style="flex:1;">Copy Decrypted</button>
+      <button onclick="swapFields()" style="flex:1;">Swap (Encrypted ⇄ Input)</button>
+    </div>
+
+    <div class="footer">Created with ❤️ — quick obfuscation tools. Not a replacement for real cryptography.</div>
+  </div>
+</div>
+
+<script>
+  // Unicode-safe Base64 helpers
+  function base64EncodeUnicode(str) {
+    // encode to UTF-8 then to base64
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+      (match, p1) => String.fromCharCode('0x' + p1)));
+  }
+  function base64DecodeUnicode(b64) {
+    // atob -> decode percent encoding -> decodeURIComponent
+    return decodeURIComponent(atob(b64).split('').map(c =>
+      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+  }
+
+  // XOR helpers using TextEncoder/TextDecoder for unicode safety
+  function xorEncrypt(text, keyNum) {
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(text);
+    const out = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) out[i] = bytes[i] ^ (keyNum & 0xFF);
+
+    // convert to binary string for btoa
+    let binary = '';
+    for (let i = 0; i < out.length; i++) binary += String.fromCharCode(out[i]);
+    return btoa(binary);
+  }
+
+  function xorDecrypt(b64str, keyNum) {
+    let binary;
+    try {
+      binary = atob(b64str);
+    } catch (e) {
+      throw new Error('Invalid Base64 for XOR decryption.');
+    }
+    const out = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i) ^ (keyNum & 0xFF);
+    const decoder = new TextDecoder();
+    return decoder.decode(out);
+  }
+
+  // Caesar helpers (simple char code shift)
+  function caesarEncrypt(text, shift) {
+    return Array.from(text).map(ch =>
+      String.fromCharCode(ch.charCodeAt(0) + shift)
+    ).join('');
+  }
+  function caesarDecrypt(text, shift) {
+    return Array.from(text).map(ch =>
+      String.fromCharCode(ch.charCodeAt(0) - shift)
+    ).join('');
+  }
+
+  // Main functions
+  function encryptText() {
+    const input = document.getElementById('inputText').value || '';
+    const method = document.getElementById('methodSelect').value;
+    const key = document.getElementById('keyInput').value;
+    let encrypted = '';
+
+    try {
+      if (method === 'base64') {
+        encrypted = base64EncodeUnicode(input);
+      } else if (method === 'xor') {
+        const keyNum = parseInt(key) || 0;
+        encrypted = xorEncrypt(input, keyNum);
+      } else if (method === 'caesar') {
+        const shift = parseInt(key) || 0;
+        encrypted = caesarEncrypt(input, shift);
+      }
+    } catch (err) {
+      encrypted = 'Encryption error: ' + err.message;
+    }
+
+    document.getElementById('encryptedOutput').value = encrypted;
+    document.getElementById('decryptedOutput').innerText = '';
+  }
+
+  function decryptText() {
+    // Prefer whatever is in the encrypted text area; if empty, use the input field
+    const encryptedArea = document.getElementById('encryptedOutput').value.trim();
+    const fallbackInput = document.getElementById('inputText').value || '';
+    const method = document.getElementById('methodSelect').value;
+    const key = document.getElementById('keyInput').value;
+    const encrypted = encryptedArea || fallbackInput;
+
+    if (!encrypted) {
+      document.getElementById('decryptedOutput').innerText = 'Nothing to decrypt.';
+      return;
+    }
+
+    let decrypted = '';
+    try {
+      if (method === 'base64') {
+        // decode safely (may throw)
+        decrypted = base64DecodeUnicode(encrypted);
+      } else if (method === 'xor') {
+        const keyNum = parseInt(key);
+        if (Number.isNaN(keyNum)) throw new Error('Invalid numeric key for XOR.');
+        decrypted = xorDecrypt(encrypted, keyNum);
+      } else if (method === 'caesar') {
+        const shift = parseInt(key) || 0;
+        decrypted = caesarDecrypt(encrypted, shift);
+      }
+      document.getElementById('decryptedOutput').innerText = decrypted;
+      // (optional) update input field so user can edit plain text
+      // document.getElementById('inputText').value = decrypted;
+    } catch (err) {
+      document.getElementById('decryptedOutput').innerText = 'Decryption error: ' + err.message;
+    }
+  }
+
+  // small helpers
+  function copyText(id) {
+    let text = '';
+    if (id === 'decryptedOutput') {
+      text = document.getElementById('decryptedOutput').innerText;
+    } else {
+      text = document.getElementById(id).value;
+    }
+    if (!text) { alert('Nothing to copy'); return; }
+    navigator.clipboard?.writeText(text).then(() => {
+      alert('Copied to clipboard');
+    }).catch(() => {
+      // fallback
+      prompt('Copy this text:', text);
+    });
+  }
+
+  function pasteToInput() {
+    const val = document.getElementById('encryptedOutput').value;
+    document.getElementById('inputText').value = val;
+  }
+
+  function swapFields() {
+    const enc = document.getElementById('encryptedOutput').value;
+    const inp = document.getElementById('inputText').value;
+    document.getElementById('encryptedOutput').value = inp;
+    document.getElementById('inputText').value = enc;
+  }
+
+  function clearAll() {
+    document.getElementById('inputText').value = '';
+    document.getElementById('encryptedOutput').value = '';
+    document.getElementById('decryptedOutput').innerText = '';
+  }
+
+  // Optional: allow Enter key in inputText to encrypt quickly
+  document.getElementById('inputText').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { encryptText(); e.preventDefault(); }
+  });
+</script>
+
+</body>
+</html>
